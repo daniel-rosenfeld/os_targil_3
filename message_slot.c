@@ -191,14 +191,15 @@ struct message *is_valid(struct file *file)
     struct message *relevant_channel = slots[iminor(file->f_inode)].my_message;
     printk("the files minor is: %d", iminor(file->f_inode));
 
-    if (relevant_channel == NULL)
+    if (relevant_channel == NULL || file == NULL)
     {
         return NULL;
     }
 
     while (relevant_channel != NULL)
     {
-        if (relevant_channel->channel == (int)file->private_data)
+        printk("the relevant channel is: %p\n" relevant_channel);
+        if (relevant_channel->channel == (int)(file->private_data))
         {
             break;
         }
