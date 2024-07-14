@@ -65,6 +65,11 @@ static ssize_t device_read(struct file *file,
         return -EINVAL;
     }
 
+    if (buffer == NULL)
+    {
+        return -EINVAL;
+    }
+
     if (relevant_channel->size == 0)
     {
         return -EWOULDBLOCK;
