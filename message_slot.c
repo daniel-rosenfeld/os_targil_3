@@ -106,11 +106,11 @@ static ssize_t device_write(struct file *file,
         kfree(relevant_channel->content);
         printk("freed and malloced\n");
     }
-    relevant_channel->content = kmalloc(length, GFP_KERNEL);
-
     else{
         printk("didn't need to\n");
     }
+    relevant_channel->content = kmalloc(length, GFP_KERNEL);
+
 
     printk("going to get user for length\n");
     for (i = 0; i < length && i < MESSAGE_LEN; i++)
