@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     char buffer[128];
     for (int i = 0; i < 128; i++){
-        buffer[i] = "\0";
+        buffer[i] = '\0';
     }
     if (argc != 3)
     {
