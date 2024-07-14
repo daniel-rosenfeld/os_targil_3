@@ -18,7 +18,6 @@
 #include <linux/fs.h>      /* for register_chrdev */
 #include <linux/uaccess.h> /* for get_user and put_user */
 #include <linux/string.h>  /* for memset. NOTE - not string.h!*/
-#include "chardev.h"
 #include <linux/errno.h>
 #include <linux/slab.h>
 #include "message_slot.h"
