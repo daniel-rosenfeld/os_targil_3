@@ -21,16 +21,19 @@ int main(int argc, char *argv[])
         perror("message_sender");
         return -1;
     }
+    printf("opend\n");
     if (ioctl(fd, MSG_SLOT_CHANNEL, atoi(argv[2])) < 0)
     {
         perror("message_sender");
         return -1;
     }
+    printf("did ioctl\n");
     if (write(fd, argv[3], strlen(argv[3])) < 0)
     {
         perror("message_sender");
         return -1;
     }
+    printf("wrote\n");
     if (close(fd) < 0)
     {
         perror("message_sender");
