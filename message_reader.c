@@ -16,22 +16,22 @@ int main(int argc, char *argv[])
         return -1;
     }
     int fd = open(argv[1], O_RDWR);
-    if (fd = -1)
+    if (fd < 0)
     {
         perror("message reader");
         return -1;
     }
-    if (ioctl(fd, MSG_SLOT_CHANNEL, atoi(argv[2])) == -1)
+    if (ioctl(fd, MSG_SLOT_CHANNEL, atoi(argv[2])) < 0)
     {
         perror("message reader");
         return -1;
     }
-    if (read(fd, buffer, 128) == -1)
+    if (read(fd, buffer, 128) < 0)
     {
         perror("message reader");
         return -1;
     }
-    if (close(fd) == -1)
+    if (close(fd) < 0)
     {
         perror("message reader");
         return -1;
