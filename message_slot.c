@@ -60,12 +60,7 @@ static ssize_t device_read(struct file *file,
     struct message *relevant_channel = is_valid(file);
     int i;
 
-    if (relevant_channel == NULL)
-    {
-        return -EINVAL;
-    }
-
-    if (buffer == NULL)
+    if (relevant_channel == NULL || buffer == NULL)
     {
         return -EINVAL;
     }
@@ -79,12 +74,12 @@ static ssize_t device_read(struct file *file,
     {
         return -ENOSPC;
     }
-
+    printk("going to put user for length\n");
     for (i = 0; i < length && i < relevant_channel->size; i++)
     {
         put_user(relevant_channel->content[i], &buffer[i]);
     }
-
+    printk("putted user for length\n");
     return relevant_channel->size;
 }
 
