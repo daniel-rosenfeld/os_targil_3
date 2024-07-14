@@ -178,6 +178,7 @@ struct message *open_channel(int channel_num)
 struct message *is_valid(struct file *file)
 {
     struct message *relevant_channel = slots[iminor(file->f_inode)].my_message;
+    printk("the files minor is: %d", iminor(file->f_inode))
 
     if (relevant_channel == NULL)
     {
