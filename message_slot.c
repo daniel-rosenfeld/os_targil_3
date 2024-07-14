@@ -198,7 +198,7 @@ struct message *is_valid(struct file *file)
 
     while (relevant_channel != NULL)
     {
-        printk("the relevant channel is: %p\n" relevant_channel);
+        printk("the relevant channel is: %p\n", relevant_channel);
         if (relevant_channel->channel == (int)(file->private_data))
         {
             break;
