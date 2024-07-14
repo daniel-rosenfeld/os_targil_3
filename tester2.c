@@ -57,7 +57,12 @@ int perform_random_write(int fd) {
         if(DEBUG){fprintf(stderr,"perform_random_write: PASSED!\n");}
         return 0;
     }
+    else
+    {
+        printf("did ioctl in write\n");
+    }
     rc = write(fd, bffr, length);
+    printf("did write\n");
     if(length>0 && length <=BUFF_SIZE) {
         if (rc == -1) {
             passed = 0;
@@ -101,6 +106,7 @@ int perform_random_read(int fd){
     passed=1;
     channel = get_random_channel();
     rc = ioctl(fd, MSG_SLOT_CHANNEL, channel);
+    printf("did ioctl in read\n");
     if (rc == -1) {
         if(channel>0) {
             fprintf(stderr, "perform_random_read: ioctl failed with error: %d\n", errno);
@@ -112,6 +118,7 @@ int perform_random_read(int fd){
         return 0;
     }
     rc = read(fd, bffr, BUFF_SIZE);
+    printf("did read\n");
     if (rc == -1) {
         if(channels_msg[channel]==0){
             if(errno != EWOULDBLOCK) {
