@@ -18,7 +18,6 @@
 #include <linux/fs.h>      /* for register_chrdev */
 #include <linux/uaccess.h> /* for get_user and put_user */
 #include <linux/string.h>  /* for memset. NOTE - not string.h!*/
-#include <linux/errno.h>
 #include <linux/slab.h>
 #include "message_slot.h"
 
@@ -40,9 +39,6 @@ struct message_slot
 int open_channel(int channel_num);
 struct message *is_valid(struct file *file);
 
-// used to prevent concurent access into the same device
-static int dev_open_flag = 0;
-
 static struct message_slot slots[MAX_NUM_OF_SLOTS];
 
 //================== DEVICE FUNCTIONS ===========================
@@ -62,17 +58,16 @@ static ssize_t device_read(struct file *file,
                            loff_t *offset)
 {
     struct message *relevant_channel = is_valid(file);
+    int i;
 
     if (relevant_channel == NULL)
     {
-        errno = EWOULDBLOCK;
-        return -1;
+        return -EWOULDBLOCK;
     }
 
     if (relevant_channel->size > length)
     {
-        errno = ENOSPC;
-        return -1;
+        return -ENOSPC;
     }
 
     for (i = 0; i < length && i < MESSAGE_LEN; i++)
@@ -92,23 +87,22 @@ static ssize_t device_write(struct file *file,
                             loff_t *offset)
 {
     struct message *relevant_channel = is_valid(file);
+    int i;
 
     if (relevant_channel == NULL)
     {
-        errno = EINVAL;
-        return -1;
+        return -EINVAL;
     }
 
     if (MESSAGE_LEN < length || length <= 0)
     {
-        errno = EMSGSIZE;
-        return -1;
+        return -EMSGSIZE;
     }
 
     if (relevant_channel->content != NULL)
     {
         kfree(relevant_channel->content);
-        relevant_channel->content = kmalloc(length);
+        relevant_channel->content = kmalloc(length, GFP_KERNEL);
     }
 
     for (i = 0; i < length && i < MESSAGE_LEN; i++)
@@ -116,7 +110,8 @@ static ssize_t device_write(struct file *file,
         get_user(relevant_channel->content[i], &buffer[i]);
     }
 
-    relevant_channel->size = length return relevant_channel->size;
+    relevant_channel->size = length;
+    return length;
 }
 
 //----------------------------------------------------------------
@@ -126,11 +121,10 @@ static long device_ioctl(struct file *file,
 {
     if ((MSG_SLOT_CHANNEL != ioctl_command_id) || (ioctl_param == 0))
     {
-        errno = EINVAL;
-        return -1;
+        return -EINVAL;
     }
 
-    bool exists = false;
+    int exists = 0;
     struct message *relevant_channel = slots[iminor(file->f_inode)].my_message;
 
     if (relevant_channel == NULL)
@@ -144,7 +138,7 @@ static long device_ioctl(struct file *file,
     {
         if (relevant_channel->next->channel == ioctl_param)
         {
-            exists = true;
+            exists = 1;
             break;
         }
         relevant_channel = relevant_channel->next;
@@ -161,9 +155,9 @@ static long device_ioctl(struct file *file,
     return SUCCESS;
 }
 
-int open_channel(int channel_num)
+struct message *open_channel(int channel_num)
 {
-    struct message *new_channel = kmalloc(sizeof(struct message));
+    struct message *new_channel = kmalloc(sizeof(struct message), GFP_KERNEL);
     new_channel->channel = channel_num;
     new_channel->content = NULL;
     new_channel->size = 0;
@@ -189,7 +183,7 @@ struct message *is_valid(struct file *file)
         relevant_channel = relevant_channel->next;
     }
 
-    return relevant_channel
+    return relevant_channel;
 }
 
 //==================== DEVICE SETUP =============================
@@ -209,6 +203,7 @@ struct file_operations Fops = {
 static int __init simple_init(void)
 {
     int rc = -1;
+    int i;
 
     // Register driver capabilities. Obtain major num
     rc = register_chrdev(MY_MAJOR, DEVICE_RANGE_NAME, &Fops);
@@ -221,9 +216,9 @@ static int __init simple_init(void)
         return rc;
     }
 
-    for (int i = 0; i < MAX_NUM_OF_SLOTS; i++)
+    for (i = 0; i < MAX_NUM_OF_SLOTS; i++)
     {
-        slots[i].my_message = NULL
+        slots[i].my_message = NULL;
     }
 
     return 0;
@@ -234,10 +229,10 @@ static void __exit simple_cleanup(void)
 {
     struct message *relevant_channel;
     struct message *next;
-
-    for (int i = 0; i < MAX_NUM_OF_SLOTS; i++)
+    int i;
+    for (i = 0; i < MAX_NUM_OF_SLOTS; i++)
     {
-        relevant_channel = slots[iminor(file->f_inode)].my_message;
+        relevant_channel = slots[i].my_message;
         next = relevant_channel;
         while (next != NULL)
         {
