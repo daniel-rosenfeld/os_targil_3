@@ -105,6 +105,10 @@ static ssize_t device_write(struct file *file,
     {
         return -EMSGSIZE;
     }
+    if (*buffer == NULL)
+    {
+        return -EMSGSIZE;
+    }
     printk("going to free and malloc\n");
     if (relevant_channel->content != NULL)
     {
