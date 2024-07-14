@@ -36,7 +36,7 @@ struct message_slot
     struct message *my_message;
 };
 
-int open_channel(int channel_num);
+struct message *open_channel(int channel_num);
 struct message *is_valid(struct file *file);
 
 static struct message_slot slots[MAX_NUM_OF_SLOTS];
@@ -119,12 +119,13 @@ static long device_ioctl(struct file *file,
                          unsigned int ioctl_command_id,
                          unsigned long ioctl_param)
 {
+    bool exists;
     if ((MSG_SLOT_CHANNEL != ioctl_command_id) || (ioctl_param == 0))
     {
         return -EINVAL;
     }
 
-    int exists = 0;
+    exists = false;
     struct message *relevant_channel = slots[iminor(file->f_inode)].my_message;
 
     if (relevant_channel == NULL)
@@ -138,7 +139,7 @@ static long device_ioctl(struct file *file,
     {
         if (relevant_channel->next->channel == ioctl_param)
         {
-            exists = 1;
+            exists = true;
             break;
         }
         relevant_channel = relevant_channel->next;
