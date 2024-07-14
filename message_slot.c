@@ -70,7 +70,7 @@ static ssize_t device_read(struct file *file,
         return -ENOSPC;
     }
 
-    for (i = 0; i < length && i < MESSAGE_LEN; i++)
+    for (i = 0; i < length && i < relevant_channel->size; i++)
     {
         put_user(relevant_channel->content[i], &buffer[i]);
     }
