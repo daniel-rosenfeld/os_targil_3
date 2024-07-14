@@ -1,0 +1,1 @@
+#define MSG_SLOT_CHANNEL 1

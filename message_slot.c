@@ -21,6 +21,7 @@
 #include "chardev.h"
 #include <linux/errno.h>
 #include <linux/slab.h>
+#include "message_slot.h"
 
 MODULE_LICENSE("GPL");
 

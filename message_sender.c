@@ -5,6 +5,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include "message_slot.h"
+#include <stdlib.h>
 
 int main(int argc, char *argv[])
 {
@@ -19,7 +21,7 @@ int main(int argc, char *argv[])
         perror("message_sender");
         return -1;
     }
-    if (ioctl(fd, argv[2]) == -1)
+    if (ioctl(fd, MSG_SLOT_CHANNEL, atoi(argv[2])) == -1)
     {
         perror("message_sender");
         return -1;
