@@ -72,7 +72,7 @@ static ssize_t device_read(struct file *file,
 
     for (i = 0; i < length && i < MESSAGE_LEN; i++)
     {
-        put_user(&buffer[i], relevant_channel->content[i]);
+        put_user(relevant_channel->content[i], &buffer[i]);
     }
 
     return relevant_channel->size;
