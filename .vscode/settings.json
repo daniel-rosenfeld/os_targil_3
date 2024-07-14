@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "fs.h": "c",
-        "string.h": "c",
-        "kernel.h": "c",
-        "fcntl.h": "c"
-    }
-}
