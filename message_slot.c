@@ -105,7 +105,7 @@ static ssize_t device_write(struct file *file,
     {
         kfree(relevant_channel->content);
         relevant_channel->content = kmalloc(length, GFP_KERNEL);
-        printk("freed and malloced\n")
+        printk("freed and malloced\n");
     }
     else{
         printk("didn't need to\n");
