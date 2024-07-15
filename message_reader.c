@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         perror("message reader");
         return -1;
     }
-    if (length = read(fd, buffer, 128) < 0)
+    if ((length = read(fd, buffer, 128)) < 0)
     {
         perror("message reader");
         return -1;
