@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "message_slot.h"
 #include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char *argv[])
 {
