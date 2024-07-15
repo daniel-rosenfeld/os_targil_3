@@ -74,12 +74,10 @@ static ssize_t device_read(struct file *file,
     {
         return -ENOSPC;
     }
-    printk("going to put user for length\n");
     for (i = 0; i < length && i < relevant_channel->size; i++)
     {
         put_user(relevant_channel->content[i], &buffer[i]);
     }
-    printk("putted user for length\n");
     return relevant_channel->size;
 }
 
@@ -93,8 +91,6 @@ static ssize_t device_write(struct file *file,
 {
     struct message *relevant_channel = is_valid(file);
     int i;
-
-    printk("valid\n");
 
     if (relevant_channel == NULL)
     {
@@ -111,24 +107,18 @@ static ssize_t device_write(struct file *file,
         return -EMSGSIZE;
     }
 
-    printk("going to free and malloc\n");
     if (relevant_channel->content != NULL)
     {
         kfree(relevant_channel->content);
-        printk("freed and malloced\n");
     }
     else{
-        printk("didn't need to\n");
     }
     relevant_channel->content = kmalloc(length, GFP_KERNEL);
 
-
-    printk("going to get user for length\n");
     for (i = 0; i < length && i < MESSAGE_LEN; i++)
     {
         get_user(relevant_channel->content[i], &buffer[i]);
     }
-    printk("got user for length\n");
 
     relevant_channel->size = length;
     return length;
@@ -189,7 +179,6 @@ struct message *open_channel(int channel_num)
 struct message *is_valid(struct file *file)
 {
     struct message *relevant_channel = slots[iminor(file->f_inode)].my_message;
-    printk("the files minor is: %d", iminor(file->f_inode));
 
     if (relevant_channel == NULL || file == NULL)
     {
@@ -198,7 +187,6 @@ struct message *is_valid(struct file *file)
 
     while (relevant_channel != NULL)
     {
-        printk("the relevant channel is: %p\n", relevant_channel);
         if (relevant_channel->channel == (int)(file->private_data))
         {
             break;
