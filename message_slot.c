@@ -130,13 +130,14 @@ static long device_ioctl(struct file *file,
                          unsigned long ioctl_param)
 {
     bool exists;
+    struct message *relevant_channel;
     if ((MSG_SLOT_CHANNEL != ioctl_command_id) || (ioctl_param == 0))
     {
         return -EINVAL;
     }
 
     exists = false;
-    struct message *relevant_channel = slots[iminor(file->f_inode)].my_message;
+    relevant_channel = slots[iminor(file->f_inode)].my_message;
 
     if (relevant_channel == NULL)
     {
@@ -187,7 +188,7 @@ struct message *is_valid(struct file *file)
 
     while (relevant_channel != NULL)
     {
-        if (relevant_channel->channel == (int)(file->private_data))
+        if (relevant_channel->channel == (ulong)(file->private_data))
         {
             break;
         }
