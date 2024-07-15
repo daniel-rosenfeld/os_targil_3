@@ -11,9 +11,7 @@
 int main(int argc, char *argv[])
 {
     char buffer[128];
-    for (int i = 0; i < 128; i++){
-        buffer[i] = '\0';
-    }
+    int length;
     if (argc != 3)
     {
         printf("not the right amount of arguments");
@@ -30,7 +28,7 @@ int main(int argc, char *argv[])
         perror("message reader");
         return -1;
     }
-    if (read(fd, buffer, 128) < 0)
+    if (length = read(fd, buffer, 128) < 0)
     {
         perror("message reader");
         return -1;
@@ -40,6 +38,6 @@ int main(int argc, char *argv[])
         perror("message reader");
         return -1;
     }
-    write(STDOUT_FILENO, buffer, strlen(buffer));
+    write(STDOUT_FILENO, buffer, length);
     return 0;
 }
