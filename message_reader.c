@@ -39,6 +39,6 @@ int main(int argc, char *argv[])
         perror("message reader");
         return -1;
     }
-    write(STDOUT_FILENO, buffer, sizeof(buffer));
+    write(STDOUT_FILENO, buffer, strlen(buffer));
     return 0;
 }
